@@ -1,4 +1,4 @@
-# Clipreel — YouTube Video Clipper
+# YouTube Video Clipper v1
 
 Tools untuk mengambil bagian tertentu (clip) dari video YouTube dan mengekspornya menjadi file video baru — tanpa perlu mengunduh seluruh video secara manual.
 
