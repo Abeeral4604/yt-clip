@@ -1,5 +1,5 @@
 # YouTube Video Clipper v1
-
+![YouTube clipper v1](https://github.com/ray4rt/yt-clip/blob/main/home-screen.jpg)
 Tools untuk mengambil bagian tertentu (clip) dari video YouTube dan mengekspornya menjadi file video baru — tanpa perlu mengunduh seluruh video secara manual.
 
 Dibangun dengan Node.js + Express, `yt-dlp` untuk pengambilan video, dan FFmpeg untuk pemotongan/encoding. Progress real-time menggunakan Server-Sent Events.
