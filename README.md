@@ -45,8 +45,8 @@ youtube-clipper/
 
 ### Install dependency Node.js
 ```bash
-git clone <repo-url> youtube-clipper
-cd youtube-clipper
+git clone https://github.com/ray4rt/yt-clip
+cd yt-clip
 npm install
 ```
 
